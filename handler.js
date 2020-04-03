@@ -3,12 +3,26 @@
 module.exports.getContacts = (event, context, callback) => {
   const axios = require('axios')
   require('dotenv').config()
-  axios.get('https://api.hubapi.com/contacts/v1/lists/all/contacts/all', {
-    params: {
-      hapikey:process.env.HUBSPOT_API_KEY
-    }
+
+  const newContact = JSON.parse(event.body)
+
+  const contactBody = {
+    properties:[]
+  }
+
+  for (const prop in newContact){
+    contactBody.properties.push({property:prop, value:newContact[prop]})
+  }
+
+  const bodyData = JSON.stringify(contactBody)
+     axios({
+     method:'post',
+     url:'https://api.hubapi.com/contacts/v1/contact/',
+     params:{hapikey:process.env.HUBSPOT_API_KEY},
+     headers: {'Content-Type': 'application/json'},
+     data: bodyData
+
   })
-  // axios.post('https://api.hubapi.com/contacts/v1/contact')
   .then((res) => {
     const response = {
       statusCode: 200,
@@ -16,8 +30,6 @@ module.exports.getContacts = (event, context, callback) => {
             "Access-Control-Allow-Origin": "*"
         },
       body: JSON.stringify({
-        message: 'Go Serverless v1.0! Your function executed successfully!',
-        input: event,
         response: res.data
       }),
     };
