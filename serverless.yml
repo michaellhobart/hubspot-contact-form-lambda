@@ -11,7 +11,7 @@ provider:
 
 functions:
   contact:
-    handler: handler.hello
+    handler: handler.getContacts
     events:
       - http:
           path: /
