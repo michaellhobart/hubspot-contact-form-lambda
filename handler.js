@@ -35,4 +35,17 @@ module.exports.getContacts = (event, context, callback) => {
     };
     callback(null, response);
   })
+  .catch((err) => {
+    console.error(err)
+    const response = {
+      statusCode: 400,
+      headers: {
+            "Access-Control-Allow-Origin": "*"
+        },
+      body: JSON.stringify({
+        response: err
+      }),
+    };
+    callback(null, response)
+  })
 };
