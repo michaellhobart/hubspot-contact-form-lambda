@@ -36,12 +36,12 @@ router.get('/', (req, res) => {
   })
 })
 
+
+
 /**
  * router.post( / ) adds a new company to the
  * Hubspot API
  */
-
-
 
 router.post('/', (req, res) => {
   const newContact = req.body
