@@ -4,6 +4,59 @@ const axios = require('axios')
 
 require('dotenv').config()
 
+const getEmails = (list) => {
+  var emailList = [];
+  list.map(contact => {
+    emailList.push(contact.properties.email.value)
+  })
+  return emailList
+}
+
+/**
+ * router.( /emails ) fetches a list of all contacts
+ * from the Hubspot API and returns a list of emails
+ */
+
+router.get('/emails', (req, res) => {
+  axios({
+    method:'get',
+    url:'https://api.hubapi.com/contacts/v1/lists/all/contacts/all',
+    params:{
+      hapikey:process.env.HUBSPOT_API_KEY,
+      property:"email"
+    },
+    headers: {'Content-Type': 'application/json'},
+  })
+  .then(data => {
+    res.status(200).json(getEmails(data.data.contacts))
+  })
+  .catch(err => {
+    res.status(500).send(`Error: ${err}`)
+  })
+})
+
+/**
+ * router.( / ) returns a list of all contacts
+ * from the Hubspot API
+ */
+
+router.get('/', (req, res) => {
+  axios({
+    method:'get',
+    url:'https://api.hubapi.com/contacts/v1/lists/all/contacts/all',
+    params:{
+      hapikey:process.env.HUBSPOT_API_KEY
+    },
+    headers: {'Content-Type': 'application/json'},
+  })
+  .then(data => {
+    res.status(200).json(data.data.contacts)
+  })
+  .catch(err => {
+    res.status(500).send(`Error: ${err}`)
+  })
+})
+
 
 /**
  * router.post( /search ) searches the
@@ -44,7 +97,6 @@ router.post('/search', (req, res) => {
 
 router.post('/', (req, res) => {
   const newContact = req.body
-  console.log(newContact);
     const contactBody = {
       properties:[]
     }
@@ -63,7 +115,7 @@ router.post('/', (req, res) => {
 
     })
     .then(data => {
-      res.status(200).json(data.data)
+      res.status(201).json(data.data)
     })
     .catch(err => {
       res.status(500).send(`Error: ${err}`)
